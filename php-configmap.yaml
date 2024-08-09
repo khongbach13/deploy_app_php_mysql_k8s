@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: php-config
+data:
+  index.php: |
+    <?php
+    $servername = getenv('DB_HOST');
+    $username = getenv('DB_USER');
+    $password = getenv('DB_PASSWORD');
+    $dbname = getenv('DB_NAME');
+
+    // Tạo kết nối
+    $conn = new mysqli($servername, $username, $password, $dbname);
+
+    // Kiểm tra kết nối
+    if ($conn->connect_error) {
+        die("Kết nối thất bại: " . $conn->connect_error);
+    }
+
+    echo "<h1>Kết nối thành công đến cơ sở dữ liệu!</h1>";
+
+    // Ví dụ về truy vấn dữ liệu
+    $sql = "SELECT id, name FROM users";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        echo "<table border='1'><tr><th>ID</th><th>Name</th></tr>";
+        while($row = $result->fetch_assoc()) {
+            echo "<tr><td>" . $row["id"]. "</td><td>" . $row["name"]. "</td></tr>";
+        }
+        echo "</table>";
+    } else {
+        echo "0 kết quả";
+    }
+
+    $conn->close();
+    ?>
+
